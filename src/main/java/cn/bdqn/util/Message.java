@@ -1,5 +1,6 @@
 package cn.bdqn.util;
 
+import com.alibaba.fastjson.serializer.SimpleDateFormatSerializer;
 import lombok.Data;
 
 /**
@@ -9,7 +10,7 @@ import lombok.Data;
 public class Message {
     private String code;
     private String msg;
-
+SimpleDateFormatSerializer;
     public static Message success() {
         Message message = new Message();
         message.setCode("0000");
