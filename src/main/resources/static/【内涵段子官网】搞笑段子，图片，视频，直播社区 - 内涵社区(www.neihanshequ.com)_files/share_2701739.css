@@ -1,0 +1,105 @@
+.pink {
+  color: #ff819f !important;
+}
+#shareWindow {
+  position: absolute;
+  display: hidden;
+  top: -999px;
+  left: 0;
+}
+#shareWindow ul {
+  overflow: hidden;
+  background-color: #ebebeb;
+}
+#shareWindow ul li {
+  float: left;
+  width: 36px;
+  height: 36px;
+  margin-right: 10px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100%;
+}
+#shareWindow ul li.login {
+  width: 99px;
+  height: 99px;
+}
+#shareWindow ul li[data-type="sina_weibo"] {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/sina_weibo_unselect_2cb74eb.png);
+}
+#shareWindow ul li[data-type="sina_weibo"].selected {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/sina_weibo_644fa45.png);
+}
+#shareWindow ul li[data-type="sina_weibo"].login {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/login/sina_weibo_a529567.png);
+}
+#shareWindow ul li[data-type="sina_weibo"].share {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/share/sina_weibo_728a7a2.png);
+}
+#shareWindow ul li[data-type="qq_weibo"] {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/qq_weibo_unselect_661b6c7.png);
+}
+#shareWindow ul li[data-type="qq_weibo"].selected {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/qq_weibo_8025afa.png);
+}
+#shareWindow ul li[data-type="qq_weibo"].login {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/login/qq_weibo_4dd7512.png);
+}
+#shareWindow ul li[data-type="qq_weibo"].share {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/share/qq_weibo_4528205.png);
+}
+#shareWindow ul li[data-type="qzone_sns"] {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/qzone_sns_unselect_9a14e0c.png);
+}
+#shareWindow ul li[data-type="qzone_sns"].selected {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/qzone_sns_2b3d1d7.png);
+}
+#shareWindow ul li[data-type="qzone_sns"].login {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/login/qzone_sns_000769f.png);
+}
+#shareWindow ul li[data-type="qzone_sns"].share {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/share/qzone_sns_baebea1.png);
+}
+#shareWindow ul li[data-type="renren_sns"] {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/renren_sns_unselect_c12343c.png);
+}
+#shareWindow ul li[data-type="renren_sns"].selected {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/renren_sns_045f6f1.png);
+}
+#shareWindow ul li[data-type="renren_sns"].login {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/login/renren_sns_020bd38.png);
+}
+#shareWindow ul li[data-type="renren_sns"].share {
+  background-image: url(/static/image/site-v2/share/renren_sns.png);
+}
+#shareWindow ul li[data-type="kaixin_sns"] {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/kaixin_sns_unselect_d38a5b4.png);
+}
+#shareWindow ul li[data-type="kaixin_sns"].selected {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/kaixin_sns_5651215.png);
+}
+#shareWindow ul li[data-type="kaixin_sns"].login {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/login/kaixin_sns_64b02e5.png);
+}
+#shareWindow ul li[data-type="kaixin_sns"].share {
+  background-image: url(/static/image/site-v2/share/kaixin_sns.png);
+}
+#shareWindow ul li {
+  cursor: pointer;
+  float: left;
+  width: 35px;
+  height: 36px;
+  margin: 8px 0 8px 8px;
+}
+#shareWindow ul li:last-child {
+  margin-right: 8px;
+}
+#shareWindow .arrow {
+  display: block;
+  width: 15px;
+  height: 7px;
+  position: absolute;
+  right: 10px;
+  bottom: -7px;
+  background: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/share/up_3b7bf0c.png) no-repeat center center;
+}

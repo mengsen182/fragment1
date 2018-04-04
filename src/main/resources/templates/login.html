@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:margin-top="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+    <link rel="dns-prefetch" href="//s3.pstatp.com/">
+    <link rel="dns-prefetch" href="//s3a.pstatp.com/"
+    ><link rel="dns-prefetch" href="//s3b.pstatp.com">
+    <link rel="dns-prefetch" href="//p1.pstatp.com/">
+    <link rel="dns-prefetch" href="//p3.pstatp.com/">
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"
+    ><meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+    <meta name="baidu-site-verification" content="T239HZAbh7">
+    <meta name="360-site-verification" content="b96e1758dfc9156a410a4fb9520c5956">
+    <meta name='360_ssp_verify' content='2ae4ad39552c45425bddb738efda3dbb'>
+    <meta name="google-site-verification" content="3PYTTW0s7IAfkReV8wAECfjIdKY-bQeSkVTyJNZpBKE">
+    <meta name="shenma-site-verification" content="34c05607e2a9430ad4249ed48faaf7cb_1432711730">
+    <meta name="baidu_union_verify" content="b88dd3920f970845bad8ad9f90d687f7">
+    <meta name="domain_verify" content="pmrgi33nmfuw4ir2ej2g65lunfqw6ltdn5wselbcm52wszbchirdqyztge3tenrsgq3dknjume2tayrvmqytemlfmiydimddgu4gcnzcfqrhi2lnmvjwc5tfei5dcnbwhazdcobuhe2dqobrpu">
+    <title>《今日头条》你关心的,才是头条! - www.toutiao.com</title>
+    <meta name="keywords" content="今日头条，头条，头条网，头条新闻，今日头条官网">
+    <meta name="description" content="《今日头条》(www.toutiao.com)是一款基于数据挖掘的推荐引擎产品，它为用户推荐有价值的、个性化的信息，提供连接人与信息的新型服务，是国内移动互联网领域成长最快的产品服务之一。">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="shortcut icon" href="//s3a.pstatp.com/toutiao/resource/ntoutiao_web/static/image/favicon_8e9c9c7.ico" type="image/x-icon">
+    <link rel="stylesheet" href="//s3a.pstatp.com/toutiao/resource/ntoutiao_web/static/style/lib/layout_5fcc025.css"><!--[if lt IE 9]>
+    <script src="//s3a.pstatp.com/toutiao/resource/ntoutiao_web/static/js/lib/es5-shim_110642e.js">
+
+    </script><![endif]--><script src="//s3.pstatp.com/toutiao/resource/ntoutiao_web/static/js/common/lib_060bfbf.js" crossorigin="anonymous">
+
+</script><link rel="stylesheet" href="//s3b.pstatp.com/toutiao/resource/ntoutiao_web/page/loginCtr/login/login_40bd3f7.css" />
+
+    <div th:insert="/util/batis::batis"></div>
+</head>
+<body style="min-width: 1220px; overflow-x: hidden;">
+<a href="/articles_news_society/" style="display:none;">
+
+</a>
+<div class="y-wrap">
+    <div class="content">
+        <a class="logo-wrap" href="http://www.toutiao.com/">
+            <img src="//s3.pstatp.com/toutiao/resource/ntoutiao_web/static/image/logo_201f80d.png" alt="">
+        </a>
+        <div class="slogan-wrap">
+            <img src="//s3a.pstatp.com/toutiao/resource/ntoutiao_web/static/image/login/slogan_9a3eba0.png" alt="">
+        </div>
+
+
+
+        <div class="row" style="padding-top: 10%;padding-left: 25%;padding-bottom: 10%  ">
+            <div class="col-md-12">
+                <div class="animate form login_form">
+                    <form class="form-horizontal" action="login">
+                        <div class="container">
+                            <div class="col-xs-12 ">
+                                <div class="col-sm-offset-1 col-sm-4">
+                                    <input type="text" name="userName" class="form-control input-lg" id="userNameId" placeholder="用户名">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container">
+                            <div class="col-xs-12">
+                                <div class="col-sm-offset-1 col-sm-4">
+                                    <input type="password" name="password" class="form-control input-lg" id="passwordId"
+                                           placeholder="密码">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container">
+                            <div class="col-xs-12">
+                                <div class="col-sm-offset-1 col-sm-4">
+                                    <input type="text" id="codeId" name="code" class="form-control input-lg" style="width:250px;" placeholder="验证码"/>
+                                </div>
+                                <img id="imgObj" alt="验证码" src="/validateCode" onclick="changeImg()" />
+                                <a href="#" onclick="changeImg()">换一张</a>
+                            </div>
+                        </div>
+                        <div class="container">
+                            <div class="col-xs-12 control-label">
+                                <div class="col-xs-5">
+                                    <input type="submit" value="登录" id="loginId" class="btn btn-default">
+                                    <input type="button" value="注册" id="registerTuserNameButton" class="btn btn-default">
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <!--添加模态框-->
+        <div class="modal fade" tabindex="-1" role="dialog" id="addTuserModel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">注册</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addTuserForm">
+                            <div class="form-group">
+                                <label >用户名：</label>
+                                <input type="text" class="form-control"  placeholder="用户名" name="userName" id="userName">
+                            </div>
+                            <div class="form-group">
+                                <label >密码：</label>
+                                <!-- <textarea class="form-control" rows="3" name="password" placeholder="密码" id="password"></textarea>-->
+                                <input class="form-control" rows="3" name="password" id="password" placeholder="密码"/>
+                            </div>
+                            <div class="form-group">
+                                <label >昵称：</label>
+                                <!--<textarea class="form-control" rows="3" name="nickName" placeholder="昵称" id="nickName"></textarea>-->
+                                <input class="form-control" rows="3" name="nickName" placeholder="昵称" id="nickName"/>
+                            </div>
+                            <div class="form-group">
+                                <label >手机：</label>
+                                <!--<textarea class="form-control" rows="3" name="phone" id="phone" placeholder="手机"></textarea>-->
+                                <input class="form-control" rows="3" id="phone" name="phone" placeholder="手机"/>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary" id="addTuserSaveButton">保存</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    </div>
+
+
+
+</div>
+<script>
+    window.globals = window.globals || {};
+
+    window.taAnalysis && taAnalysis.setup({
+        c: 'sso_login'
+    });
+    window.taAnalysis && taAnalysis.send('pageview', {});
+
+    utils.on(document.getElementsByTagName('body')[0], 'click', function(e) {
+        var target = utils.getTarget(e),
+            ga_event,
+            ga_category,
+            ga_label,
+            ga_value;
+
+        while(target && target.nodeName.toUpperCase() !== 'BODY') {
+            ga_event = utils.getAttribute(target, 'ga_event');
+            ga_category = utils.getAttribute(target, 'ga_category') || 'sso_login';
+            ga_label = utils.getAttribute(target, 'ga_label');
+            ga_value = utils.getAttribute(target, 'ga_value') || 1;
+
+            ga_event && window._czc && _czc.push(["_trackEvent", ga_category, ga_event, ga_label, ga_value]);
+            ga_event && taAnalysis && taAnalysis.send('event', { ev: ga_event });
+            target = target.parentNode;
+        }
+    });
+
+    riot.observable(window);
+</script>
+<script src='//s2.pstatp.com/growth/confucius/confs/toutiao.web.toutiao_pc-pc-fe_switch.js?t=04031755'>
+
+</script><script>
+    var PAGE_SWITCH = window['toutiao.web.toutiao_pc/pc/fe_switch'] || {};
+</script><script src="//s3.pstatp.com/toutiao/resource/ntoutiao_web/page/loginCtr/login/login_719036e.js">
+
+</script>
+<script>
+    $(function () {
+        $("#registerTuserNameButton").click(function () {
+            $("#addTuserModel").modal("show");
+            var userName = $("input[name= 'userName']").val();
+            var password = $("input[name='password']").val();
+            var nickName= $("input[name='nickName']").val();
+            var phone = $("input[name='phone']").val();
+            if(userName=""){
+                alert("请输入用户名");
+                return false;
+            }else if(password=""){
+                alert("请输入密码");
+                return false;
+            }else if(nickName=""){
+                alert("请输入用户昵称");
+                return false;
+            }else if(phone=""){
+                alert("请输入手机");
+                return false;
+            }
+
+        })
+        $("#addTuserSaveButton").click(function () {
+            var tuser=$("#addTuserForm").serialize();
+            $.post("/addTuser",tuser,function (data) {
+                alert(data.msg);
+                $("#addTuserModel").modal("hide");
+                location.href=location.href;
+            })
+        })
+
+    })
+</script>
+<script type="text/javascript">
+    /*<%--登录验证--%>*/
+    $(function () {
+        $("#loginId").click(function () {
+            var codeIdText = $("#codeId").val();
+            var userName = $("#userNameId").val();
+            var password = $("#passwordId").val();
+            if (userName == null | userName == "") {
+                alert("请填写用户名");
+                return false;
+            } else if (password == null | password == "") {
+                alert("请填写密码");
+                return false;
+            } else if (codeIdText == null | codeIdText == "") {
+                alert("请输入验证码");
+                return false;
+            }
+            return true;
+        })
+    })
+
+    /* //        验证码刷新图片*/
+    function changeImg() {
+        var imgSrc = $("#imgObj");
+        var src = imgSrc.attr("src");
+        src = "";
+        src = "/validateCode";
+        imgSrc.attr("src", changeUrl(src));
+    }
+    /*  //为了使每次生成图片不一致，即不让浏览器读缓存，所以需要加上时间戳*/
+    function changeUrl(url) {
+        var timestamp = (new Date()).valueOf();
+        var index = url.indexOf("?", url);
+        if (index > 0) {
+            url = url.substring(0, url.indexOf(url, "?"));
+        }
+        if ((url.indexOf("&") >= 0)) {
+            url = url + "×tamp=" + timestamp;
+        } else {
+            url = url + "?timestamp=" + timestamp;
+        }
+        return url;
+    }
+
+
+
+
+</script>
+
+
+
+
+<script src="//mp.toutiao.com/static/v2/resource/resfallback/sso-toutiao.min.js">
+
+</script>
+<script src="//s95.cnzz.com/z_stat.php?id=1259612802&web_id=1259612802" language="JavaScript"></script>
+</div>
+</body>
+</html>

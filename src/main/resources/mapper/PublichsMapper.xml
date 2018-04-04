@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.dao.PublishMapper">
+    <resultMap id="pMap" type="Publish">
+        <id property="publishId" column="publishid"/>
+        <result property="discussId" column="discussid"/>
+        <result property="selectId" column="selectid"/>
+        <result property="publishContent" column="publishcontent"/>
+        <result property="publishName" column="publishname"/>
+        <result property="createDate" column="createdate"/>
+        <association property="tUser" javaType="TUser">
+            <id property="userId" column="userid"/>
+            <result property="phone" column="phone"/>
+            <result property="selectId" column="selectid"/>
+            <result property="userName" column="username"/>
+            <result property="password" column="password"/>
+            <result property="nickName" column="nickname"/>
+        </association>
+    </resultMap>
+
+    <select id="queryPublishById" resultMap="pMap">
+        SELECT tu.`userName`,tu.`userId`,pu.* FROM publish pu,tuser tu
+        WHERE
+         tu.`userId`=pu.`userId`
+        AND
+         pu.`publishId`=#{publishId}
+    </select>
+    <select id="queryAll" resultMap="pMap">
+        SELECT * FROM tuser,publish where tuser.userid=publish.userid
+    </select>
+</mapper>

@@ -1,0 +1,30 @@
+define('pagelet/site-v2/popup-window/login/login.js', function(require, exports, module){ var user = require('common/util/user.js');
+
+module.exports = Pagelet.extend({
+	el: '#loginPopupWindow',
+	events: {
+		'click .share-items li': 'onSelectLoginType'
+	},
+	init: function() {
+		this.el = $(this.el);
+		listener.on('com.neihanshequ', 'showLogin', this.show.bind(this));
+	},
+	show: function() {
+		this.el.show();
+	},
+	hide: function() {
+		this.el.hide();
+	},
+	onSelectLoginType: function(event) {
+		var $ct = $(event.currentTarget);
+		var type = $ct.data('type');
+		var self = this;
+		user.loginByOther(type, {
+			openWindow: true,
+            successCb: function(user) {
+            	self.hide();
+            }
+        });
+	}
+}); 
+});

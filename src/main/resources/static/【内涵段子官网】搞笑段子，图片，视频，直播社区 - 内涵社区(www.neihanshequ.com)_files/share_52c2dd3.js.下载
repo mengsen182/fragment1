@@ -1,0 +1,74 @@
+define('pagelet/site-v2/share/share.js', function(require, exports, module){ var bdshare = require('common/util/bdshare.js');
+
+module.exports = Pagelet.extend({
+	el: '#shareWindow',
+	events: {
+		'click ul li': 'onShare'
+	},
+	init: function() {
+		this.el = $(this.el);
+		listener.on('com.neihanshequ', 'showShare', function(type, $el, obj) {
+			this.shareObject = obj;
+			this.show($el);
+		}.bind(this));
+
+		listener.on('com.neihanshequ', 'hideShare', function(type) {
+			this.hide();
+		}.bind(this));
+
+		this.height = this.el.height();
+		this.width = this.el.width();
+
+		this.reset();
+
+		var self = this;
+		this.el.mouseover(function() {
+			clearTimeout(window.__nh_showShareTimeId);
+		}).mouseout(function() {
+			clearTimeout(window.__nh_showShareTimeId);
+			window.__nh_showShareTimeId = setTimeout(function() {
+				self.hide();
+			}, 300);
+		})
+	},
+	reset: function() {
+	},
+	show: function($el) {
+		this.reset();
+		var offset = $el.offset();
+		this.el.css('top', offset.top - this.height - 7);
+		this.el.css('left', offset.left - this.width + $el.innerWidth());
+		this.el.show();
+	},
+	hide: function() {
+		this.el.hide();
+	},
+
+	onShare: function(event) {
+		var $ct = $(event.currentTarget);
+		bdshare($ct.data('shareType').replace('bds_', ''), this.shareObject);
+		//对分享事件进行统计
+		var actionType = {
+			bds_tsina: 'share',
+			bds_tqq: 'share',
+			bds_qzone: 'share_qzone'
+		};
+		$.ajax({
+			url: '/m/api/item_action/',
+			type: 'POST',
+			dataType: 'json',
+			data: {
+				action: actionType[$ct.data('shareType')],
+				group_id: this.shareObject.groupId,
+				app_name: 'neihanshequ_web'
+			}
+		})
+		.done(function(data) {
+			//console.log(data);
+		})
+		.fail(function() {
+			console.error('ERROR');
+		});
+	}
+}); 
+});

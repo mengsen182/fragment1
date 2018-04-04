@@ -1,0 +1,108 @@
+.pink {
+  color: #ff819f !important;
+}
+#loginPopup {
+  text-align: center;
+}
+#loginPopup .share-items {
+  margin-top: 98px;
+  display: inline-block;
+  overflow: hidden;
+  margin-bottom: 44px;
+}
+#loginPopup .share-items li {
+  float: left;
+  width: 36px;
+  height: 36px;
+  margin-right: 10px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100%;
+}
+#loginPopup .share-items li.login {
+  width: 99px;
+  height: 99px;
+}
+#loginPopup .share-items li[data-type="sina_weibo"] {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/sina_weibo_unselect_2cb74eb.png);
+}
+#loginPopup .share-items li[data-type="sina_weibo"].selected {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/sina_weibo_644fa45.png);
+}
+#loginPopup .share-items li[data-type="sina_weibo"].login {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/login/sina_weibo_a529567.png);
+}
+#loginPopup .share-items li[data-type="sina_weibo"].share {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/share/sina_weibo_728a7a2.png);
+}
+#loginPopup .share-items li[data-type="qq_weibo"] {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/qq_weibo_unselect_661b6c7.png);
+}
+#loginPopup .share-items li[data-type="qq_weibo"].selected {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/qq_weibo_8025afa.png);
+}
+#loginPopup .share-items li[data-type="qq_weibo"].login {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/login/qq_weibo_4dd7512.png);
+}
+#loginPopup .share-items li[data-type="qq_weibo"].share {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/share/qq_weibo_4528205.png);
+}
+#loginPopup .share-items li[data-type="qzone_sns"] {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/qzone_sns_unselect_9a14e0c.png);
+}
+#loginPopup .share-items li[data-type="qzone_sns"].selected {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/qzone_sns_2b3d1d7.png);
+}
+#loginPopup .share-items li[data-type="qzone_sns"].login {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/login/qzone_sns_000769f.png);
+}
+#loginPopup .share-items li[data-type="qzone_sns"].share {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/share/qzone_sns_baebea1.png);
+}
+#loginPopup .share-items li[data-type="renren_sns"] {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/renren_sns_unselect_c12343c.png);
+}
+#loginPopup .share-items li[data-type="renren_sns"].selected {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/renren_sns_045f6f1.png);
+}
+#loginPopup .share-items li[data-type="renren_sns"].login {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/login/renren_sns_020bd38.png);
+}
+#loginPopup .share-items li[data-type="renren_sns"].share {
+  background-image: url(/static/image/site-v2/share/renren_sns.png);
+}
+#loginPopup .share-items li[data-type="kaixin_sns"] {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/kaixin_sns_unselect_d38a5b4.png);
+}
+#loginPopup .share-items li[data-type="kaixin_sns"].selected {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/account/kaixin_sns_5651215.png);
+}
+#loginPopup .share-items li[data-type="kaixin_sns"].login {
+  background-image: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/login/kaixin_sns_64b02e5.png);
+}
+#loginPopup .share-items li[data-type="kaixin_sns"].share {
+  background-image: url(/static/image/site-v2/share/kaixin_sns.png);
+}
+#loginPopup .share-items li {
+  margin-right: 52px;
+}
+#loginPopup .share-items li:last-child {
+  margin: 0;
+}
+#loginPopup .share-items li a {
+  display: block;
+  height: 100%;
+}
+#loginPopup .agree-warpper {
+  display: block;
+}
+#loginPopup .agree {
+  display: inline-block;
+  margin: 0;
+  color: #999;
+  font-size: 18px;
+  height: 25px;
+  line-height: 28px;
+  padding-left: 35px;
+  background: url(//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/login/agree_a3f8893.png) no-repeat left center;
+}

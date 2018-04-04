@@ -1,0 +1,47 @@
+.pink {
+  color: #ff819f !important;
+}
+#auditPopupWindow .popup-window {
+  width: 534px;
+  height: 330px;
+  min-height: 330px;
+  margin-left: -267px;
+  margin-top: -165px;
+  position: relative;
+}
+#auditPopupWindow .popup-window .phone {
+  position: relative;
+  bottom: 15px;
+  margin-left: 34px;
+}
+#auditPopupWindow .popup-window .text-wrapper {
+  margin-left: 28px;
+  margin-top: 70px;
+}
+#auditPopupWindow .popup-window .text-wrapper .h1 {
+  color: #ff819f;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+#auditPopupWindow .popup-window .text-wrapper .h2 {
+  color: #717171;
+  font-size: 18px;
+  margin-bottom: 28px;
+}
+#auditPopupWindow .popup-window .text-wrapper .button {
+  color: #fff;
+  font-size: 16px;
+  height: 48px;
+  line-height: 48px;
+  text-align: center;
+  border-radius: 5px;
+}
+#auditPopupWindow .popup-window .text-wrapper .button a {
+  color: #fff;
+  display: block;
+}
+#auditPopupWindow .popup-window .text-wrapper .qrcode {
+  width: 140px;
+  position: relative;
+  top: -15px;
+}

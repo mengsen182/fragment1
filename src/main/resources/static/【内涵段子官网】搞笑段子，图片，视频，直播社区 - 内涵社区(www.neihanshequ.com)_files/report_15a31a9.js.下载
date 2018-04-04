@@ -1,0 +1,61 @@
+define('pagelet/site-v2/popup-window/report/report.js', function(require, exports, module){ module.exports = Pagelet.extend({
+	el: '#reportPopupWindow',
+	events: {
+		'click ul li': 'onSelectType',
+		'click .submit-btn': 'onSubmit'
+	},
+	init: function() {
+		this.el = $(this.el);
+		listener.on('com.neihanshequ', 'showReport', function(type, id) {
+			this.reportId = id;
+			this.show();
+		}.bind(this));
+		this.reset();
+	},
+	reset: function() {
+		this.selectType = '';
+		this.el.find('li').removeClass('select');
+	},
+	show: function() {
+		this.reset();
+		this.el.show();
+	},
+	hide: function() {
+		this.el.hide();
+	},
+
+	onSelectType: function(event) {
+		$ct = $(event.currentTarget);
+		$ct.parent().find('li').removeClass('select');
+		$ct.addClass('select');
+		this.selectType = $ct.data('type');
+	},
+
+	onSubmit: function() {
+		this.doSubmit = true;
+		var self = this;
+		$.ajax({
+            url: '/m/api/1/report_json/',
+            type: 'post',
+            dataType: 'json',
+            data: {
+                group_id: this.reportId,
+                report_type: this.selectType
+            }
+        }).done(function(data) {
+            if(data.message === 'success') {
+                self.hide();
+                listener.trigger('com.neihanshequ', 'popupTip', {
+                    text: '举报成功'
+                });
+            }else {
+                self.onError();
+            }
+        }).fail(function() {
+            self.onError();
+        }).always(function() {
+            self.doSubmit = false;
+        });
+	}
+}); 
+});

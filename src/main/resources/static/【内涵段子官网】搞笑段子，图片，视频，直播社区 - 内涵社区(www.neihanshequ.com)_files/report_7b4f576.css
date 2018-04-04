@@ -1,0 +1,50 @@
+.pink {
+  color: #ff819f !important;
+}
+#reportPopupWindow .content {
+  text-align: center;
+}
+#reportPopupWindow ul {
+  overflow: hidden;
+  display: inline-block;
+  margin-top: 98px;
+}
+#reportPopupWindow ul li {
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  width: 120px;
+  height: 30px;
+  line-height: 33px;
+  text-align: left;
+  float: left;
+  padding-left: 50px;
+  background: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/report/report_03f742b.png) no-repeat left center;
+  font-size: 18px;
+  color: #717171;
+  margin-bottom: 40px;
+}
+#reportPopupWindow ul li.select {
+  background-image: url(//s3.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/report/report-select_cfd8eac.png);
+}
+#reportPopupWindow ul li:nth-child(2n) {
+  margin-left: 80px;
+}
+#reportPopupWindow ul li:nth-child(2n+1) {
+  clear: left;
+}
+#reportPopupWindow .submit-btn-wrapper {
+  width: 100%;
+  text-align: center;
+}
+#reportPopupWindow .submit-btn {
+  cursor: pointer;
+  border: 0;
+  background-color: #ff819f;
+  color: #fff;
+  width: 154px;
+  height: 54px;
+  line-height: 54px;
+  font-size: 18px;
+  display: inline-block;
+}

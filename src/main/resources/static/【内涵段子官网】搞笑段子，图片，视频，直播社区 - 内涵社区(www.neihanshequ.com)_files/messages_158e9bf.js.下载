@@ -1,0 +1,152 @@
+define('common/listview/messages.js', function(require, exports, module){ var TEMPLATE = function(obj){
+var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+with(obj||{}){
+__p+='';
+ for (var i = 0, len = data.length; i < len; i++) { var the_data = data[i].group || data[i]; var god_comment = is_god_comment ? data[i].comment : null;
+__p+='\r\n<li class="group-item">\r\n    <div class="detail-wrapper">\r\n        <div class="header">\r\n            ';
+if(the_data.update_type == 50){
+__p+='\r\n            <a>\r\n            ';
+}else{
+__p+='\r\n            <a href="/user/'+
+((__t=(the_data.user_id))==null?'':__t)+
+'/" target="_blank">\r\n            ';
+}
+__p+='\r\n                ';
+if(the_data.update_type == 50){
+__p+='\r\n                <img class="avatar lazy-load left" data-src="/static/image/site-v2/sys-icon.png" onerror="this.src=\'http://mat1.gtimg.com/www/mb/images/head_50.jpg\'" alt="">\r\n                ';
+}else{
+__p+='\r\n                <img class="avatar lazy-load left" data-src="'+
+((__t=(the_data.avatar_url))==null?'':__t)+
+'" onerror="this.src=\'http://mat1.gtimg.com/www/mb/images/head_50.jpg\'" alt="">\r\n                ';
+}
+__p+='\r\n                <div class="name-time-wrapper left">\r\n                    <span class="name">\r\n                        ';
+if(the_data.update_type == 50){
+__p+='\r\n                        系统消息\r\n                        ';
+}else{
+__p+='\r\n                        '+
+((__t=(the_data.user_screen_name))==null?'':__t)+
+'\r\n                        ';
+if(the_data.user_verified){
+__p+='<i class=\'user_verified\'  title="微博认证用户"></i>';
+}
+__p+='\r\n                        ';
+}
+__p+='\r\n\r\n                        <span class="time">'+
+((__t=(the_data.update_desc))==null?'':__t)+
+'</span>\r\n\r\n                        ';
+if(the_data.unread){
+__p+='\r\n                        <span class="new-msg" style="color:red;">  新消息</span>\r\n                        ';
+}
+__p+='\r\n                    </span>\r\n                    <span class="time timeago">\r\n                        '+
+((__t=(new Date(the_data.display_time*1000).format('M-d h:m')))==null?'':__t)+
+'\r\n                    </span>\r\n                </div>\r\n            </a>\r\n\r\n            <div class="other-btn right">\r\n                <div class="delete-btn hidden" data-group-id="'+
+((__t=(the_data.group_id))==null?'':__t)+
+'"></div>\r\n            </div>\r\n\r\n\r\n        </div>\r\n        <div class="content-wrapper" style="margin-bottom:0;">\r\n            ';
+if(typeof noLink != 'undefined' && noLink){
+__p+='\r\n            <a>\r\n            ';
+}else{
+__p+='\r\n                ';
+if(the_data.update_type != 41 && the_data.update_type != 60){
+__p+='\r\n                <a target="_blank" class="image share_url" href="/p'+
+((__t=(the_data.group_id))==null?'':__t)+
+'/">\r\n                ';
+}else{
+__p+='\r\n                    ';
+if(the_data.update_type == 60){
+__p+='\r\n                    <a target="_blank" class="image share_url" href="/user/'+
+((__t=(the_data.user_id))==null?'':__t)+
+'/">\r\n                    ';
+}
+__p+='\r\n                ';
+}
+__p+='\r\n            ';
+}
+__p+='\r\n                ';
+if(the_data.text){
+__p+='\r\n                <div class="comment-wrapper">\r\n                    <div class="upload-txt">\r\n                        '+
+((__t=(the_data.text))==null?'':__t)+
+'\r\n                    </div>\r\n                    <div class="origin">\r\n                ';
+}
+__p+='\r\n                \r\n                <div class="upload-txt mt ';
+if(!the_data.content){
+__p+='no-mb';
+}
+__p+=' ';
+if(!the_data.large_image && !the_data.mp4_url){
+__p+='no-mb';
+}
+__p+='">\r\n                    '+
+((__t=(the_data.content))==null?'':__t)+
+'\r\n                </div>\r\n\r\n                ';
+if(the_data.large_image){
+__p+='\r\n                <img class="upload-img lazy-load" data-src="'+
+((__t=(the_data.large_image))==null?'':__t)+
+'" onerror="this.src=\''+
+((__t=(the_data.middle_image))==null?'':__t)+
+'\'">\r\n                ';
+}
+__p+='\r\n                ';
+if(the_data.mp4_url){
+__p+='\r\n                <div class="video-container" id="videoContainer">\r\n                    <div class="poster-page ';
+if(channel == 'detail'){
+__p+='hidden';
+}
+__p+='">\r\n                        <a class="poster-link" href="javascript:;">\r\n                            <div class="wrapper img-wrapper">\r\n                                <img \r\n                                    class="poster J-share-img" \r\n                                    alt="" \r\n                                    data-image-info=\'{"l":{"w":"'+
+((__t=(the_data.video_width))==null?'':__t)+
+'","h":"'+
+((__t=(the_data.video_height))==null?'':__t)+
+'","s":"'+
+((__t=(the_data.large_cover.url_list[0].url))==null?'':__t)+
+'","s1":"'+
+((__t=(the_data.large_cover.url_list[1].url))==null?'':__t)+
+'"},"m":{"w":"'+
+((__t=(the_data.video_width))==null?'':__t)+
+'","h":"'+
+((__t=(the_data.video_height))==null?'':__t)+
+'","s":"'+
+((__t=(the_data.medium_cover.url_list[0].url))==null?'':__t)+
+'","s1":"'+
+((__t=(the_data.medium_cover.url_list[1].url))==null?'':__t)+
+'"%>\' \r\n                                    src="'+
+((__t=(the_data.large_cover.url_list[0].url))==null?'':__t)+
+'"\r\n                                    onerror="this.src=\''+
+((__t=(the_data.large_cover.url_list[1].url))==null?'':__t)+
+'\'" />\r\n                                <div class="play-btn">\r\n                                    <div class="play-btn-arrow"></div>\r\n                                </div>\r\n                                <div class="desc">\r\n                                    <p class="play-count left"><span>'+
+((__t=(the_data.play_count))==null?'':__t)+
+'</span>次播放</p>\r\n                                    <p class="total-time right" data-duration="'+
+((__t=(the_data.duration))==null?'':__t)+
+'"></p>\r\n                                </div>\r\n                            </div>\r\n                        </a>\r\n                    </div>\r\n                    <div class="player-container" data-src="'+
+((__t=(the_data.mp4_url))==null?'':__t)+
+'" data-poster-src="'+
+((__t=(the_data.large_cover.url_list[0].url))==null?'':__t)+
+'">\r\n                        <video class="upload-video hidden" src="'+
+((__t=(the_data.mp4_url))==null?'':__t)+
+'" poster="'+
+((__t=(the_data.large_cover.url_list[0].url))==null?'':__t)+
+'" controls="controls" preload="none"></video>\r\n                    </div>\r\n                </div>\r\n                ';
+}
+__p+='\r\n                \r\n                ';
+if(the_data.text){
+__p+='\r\n                    </div> <!-- end of orign -->\r\n                </div> <!-- end of comment-wrapper -->\r\n                ';
+}
+__p+='\r\n\r\n                ';
+if(the_data.update_type == 60){
+__p+='\r\n                <style>\r\n                .user-info {\r\n                    overflow:hidden;\r\n                    padding-left: 14px;\r\n                }\r\n                .user-info li {\r\n                    float: left;\r\n                    margin-right: 40px;\r\n                }\r\n                </style>\r\n                <ul class="user-info">\r\n                    <li>发表：'+
+((__t=(the_data.ugc_count))==null?'':__t)+
+'</li>\r\n                    <li>评论：'+
+((__t=(the_data.comment_count))==null?'':__t)+
+'</li>\r\n                    <li>积分：'+
+((__t=(the_data.point))==null?'':__t)+
+'</li>\r\n                </ul>\r\n                ';
+}
+__p+='\r\n\r\n            </a>\r\n        </div>\r\n    </div>\r\n</li>\r\n';
+ } 
+__p+='';
+}
+return __p;
+};
+
+var EVENT = 'listview';
+
+eval("var DEFAULT_CONFIG = {\r\n\turl: '',\r\n\thas_more: false,\r\n\tmin_time: '',\r\n\tmax_time: '',\r\n\tctn: '',\r\n\tis_god_comment: false,\r\n\toffset: 0,\r\n\tcount: 40\r\n};\r\n\r\nvar htmlEntities = function htmlEntities(str){\r\n    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;');\r\n};\r\n\r\nvar DEFAULT_DATA = {\r\n\tis_god_comment: false,\r\n\tis_detail: false,\r\n\tchannel: '',\r\n\thtmlEntities: htmlEntities\r\n};\r\n\r\nvar EVENT_TYPE = {\r\n\tLOAD_MORE: 'loadmore',\r\n\tLOAD_LATEST: 'loadlatest',\r\n\tLOAD_COMMENTS: 'loadcomments',\r\n\tLOAD_MORE_COMMENTS: 'loadmore-comments',\r\n\tAPPEND_COMMENTS: 'append-comments'\r\n};\r\n\r\nfunction _init() {\r\n\tlistener.on('com.neihanshequ', EVENT, load);\r\n}\r\n\r\nfunction _offEvent() {\r\n\tlistener.off('com.neihanshequ', EVENT, load);\r\n}\r\n\r\nfunction canDoAjax(type, config) {\r\n\tif(type === EVENT_TYPE.LOAD_MORE) {\r\n\t\treturn config.has_more;\r\n\t}else if(type === EVENT_TYPE.LOAD_LATEST) {\r\n\t\treturn true;\r\n\t}else if(type === EVENT_TYPE.LOAD_COMMENTS || \r\n\t\t\t type === EVENT_TYPE.LOAD_MORE_COMMENTS) {\r\n\t\treturn config.has_more;\r\n\t} \r\n\treturn false;\r\n}\r\n\r\nfunction canDo(type, config) {\r\n\tif(type === EVENT_TYPE.APPEND_COMMENTS) {\r\n\t\treturn true;\r\n\t}\r\n\treturn false;\r\n}\r\n\r\nfunction getParams(type, config) {\r\n\tvar data = {};\r\n\r\n\tif(type === EVENT_TYPE.LOAD_MORE) {\r\n\t\tdata = {\r\n\t\t\tmax_time: config.max_time\r\n\t\t};\r\n\t\tif('page' in config && 'count' in config) {\r\n\t\t\tdata = {\r\n\t\t\t\tpage: config.page,\r\n\t\t\t\tcount: config.count\r\n\t\t\t};\r\n\t\t}\r\n\t}else if(type === EVENT_TYPE.LOAD_LATEST) {\r\n\t\tdata = {\r\n\t\t\tmin_time: config.min_time\r\n\t\t};\r\n\t}else if(type === EVENT_TYPE.LOAD_COMMENTS || \r\n\t\t\t type === EVENT_TYPE.LOAD_MORE_COMMENTS) {\r\n\t\tdata = {\r\n\t\t\toffset: config.offset\r\n\t\t};\r\n\t} \r\n\treturn data;\r\n}\r\n\r\nfunction load(event, type, config) {\r\n\t// config = $.extend({}, DEFAULT_CONFIG, config);\r\n\tfor(var key in DEFAULT_CONFIG) {\r\n\t\tif(!config.hasOwnProperty(key)) {\r\n\t\t\tconfig[key] = DEFAULT_CONFIG[key];\r\n\t\t}\r\n\t}\r\n\r\n\tfunction __deferResolve(data) {\r\n\t\tif(config.defer) {\r\n\t\t\tconfig.defer.resolve(data);\r\n\t\t\tdelete config['defer'];\r\n\t\t}\r\n\t}\r\n\tif(canDoAjax(type, config)) {\r\n\t\t$('.loading-more').show();\r\n\t\t_offEvent();\r\n\t\tvar paramData = getParams(type, config);\r\n\t\t$.ajax({\r\n\t\t\turl: config.url,\r\n\t\t\ttype: 'get',\r\n\t\t\tdataType: 'json',\r\n\t\t\tdata: paramData\r\n\t\t}).done(function(data) {\r\n\t\t\t/**\r\n\t\t\t * 这里首先进行loading元素的消失，这样优先于添加数据的模块，可以确保消失过程动画不卡顿\r\n\t\t\t */\r\n\t\t\tlistener.trigger('bytefe.pull2refresh', 'reset');\r\n\t\t\tif(data.message === 'success' || data.data.message == 'success') {\r\n\t\t\t\t/**\r\n\t\t\t\t * 这里用timeout的形式触发，是为了延迟100ms来给前面loading元素消失动画\r\n\t\t\t\t * 足够的时间完成动画过程，避免渲染操作卡顿住消失动画\r\n\t\t\t\t */\r\n\t\t\t\tsetTimeout(function() {\r\n\t\t\t\t\t_render(type, config, data);\r\n\t\t\t\t\t__deferResolve(data);\r\n\t\t\t\t}, 100);\r\n\t\t\t}else {\r\n\t\t\t\tconsole.log('onError', data.message);\r\n\t\t\t}\r\n\t\t}).fail(function() {\r\n\t\t\tconsole.log('onError');\r\n\t\t\t__deferResolve();\r\n\t\t}).always(function() {\r\n\t\t\t_init();\r\n\t\t});\t\r\n\t}else if(canDo(type, config)) {\r\n\t\t_render(type, config, config.data);\r\n\t}else {\r\n\t\t$('.loading-more').hide();\r\n\t}\r\n}\r\n\r\nfunction _renderLoadMore(config, data) {\r\n\tvar d = $.extend({}, DEFAULT_DATA, data.data);\r\n\td.is_god_comment = config.is_god_comment;\r\n\tvar html = TEMPLATE(d);\r\n\t$(config.ctn).hide().append(html).show();\t\r\n}\r\n\r\nfunction _renderLoadLatest(config, data) {\r\n\tvar d = $.extend({}, DEFAULT_DATA, data.data);\r\n\td.is_god_comment = config.is_god_comment;\r\n\t\r\n\tvar html = TEMPLATE(d);\r\n\r\n\t$(config.ctn).prepend(html);\r\n\r\n\tglobal_tip(data.data.tip);\r\n\t\r\n}\r\n\r\nfunction _renderLoadComments(config, data) {\r\n\tvar hideSofa = false;\r\n\tvar hotTarget = $(config.ctn).find('.hot-comments');\r\n\tvar target = $(config.ctn).find('.comments');\r\n\r\n\tif(data.data.top_comments && data.data.top_comments.length > 0) {\r\n\t \tvar html = TEMPLATE({data: data.data.top_comments, group_id: data.group_id, htmlEntities: htmlEntities});\r\n\t \thideSofa = true;\r\n\t \thotTarget.find('.comment-list').empty().append(html);\t\r\n\t \thotTarget.find('.J-comments-count').text((data.data.top_comments||[]).length);\r\n\t \thotTarget.removeClass('hidden')\r\n\t}else {\r\n\t \thotTarget.addClass('hidden');\r\n\t}\r\n\r\n\tif(data.data.recent_comments && data.data.recent_comments.length > 0) {\r\n\t\tvar html = TEMPLATE({data: data.data.recent_comments, group_id: data.group_id, htmlEntities: htmlEntities});\r\n\t\thideSofa = true;\r\n\t\t\r\n\t\ttarget.find('.comment-list').empty().append(html);\r\n\t\ttarget.find('.J-comments-count').text(data.total_number - (data.data.top_comments||[]).length);\r\n\t\ttarget.removeClass('hidden');\r\n\t}else {\r\n\t\ttarget.addClass('hidden');\r\n\t}\r\n\r\n\t// if(hideSofa) {\r\n\t// \t$(config.ctn).find('.no-comments').hide();\r\n\t// }else {\r\n\t// \t$(config.ctn).find('.no-comments').show();\r\n\t// }\r\n}\r\n\r\nfunction _renderLoadMoreComments(config, data) {\r\n\tvar target = $(config.ctn).find('.comments');\r\n\tif(data.data.recent_comments && data.data.recent_comments.length > 0) {\r\n\t\tvar html = TEMPLATE({data: data.data.recent_comments, group_id: data.group_id, htmlEntities: htmlEntities});\r\n\t\ttarget.find('.comment-list').append(html);\r\n\t\ttarget.removeClass('hidden')\r\n\t\t//$(config.ctn).append(html);\r\n\t}\r\n}\r\n\r\nfunction _renderAppendComments(config, data) {\r\n\tvar target = $(config.ctn).find('.comments');\r\n\tif(data.data.comments && data.data.comments.length > 0) {\r\n\t\t//$(config.ctn).find('.no-comments').hide();\r\n\t\tvar html = TEMPLATE({data: data.data.comments, group_id: data.group_id, htmlEntities: htmlEntities});\r\n\t\ttarget.find('.comment-list').prepend(html);\r\n\t\ttarget.removeClass('hidden');\r\n\t\ttarget.find('.J-comments-count').each(function(idx, el) {\r\n\t\t\tel = $(el);\r\n\t\t\tel.text(~~el.text()+data.data.comments.length);\r\n\t\t});\r\n\t}\r\n}\r\n\r\nvar renderMethodMap = {};\r\n\r\nrenderMethodMap[EVENT_TYPE.LOAD_MORE] = _renderLoadMore;\r\nrenderMethodMap[EVENT_TYPE.LOAD_LATEST] = _renderLoadLatest;\r\nrenderMethodMap[EVENT_TYPE.LOAD_COMMENTS] = _renderLoadComments;\r\nrenderMethodMap[EVENT_TYPE.LOAD_MORE_COMMENTS] = _renderLoadMoreComments;\r\nrenderMethodMap[EVENT_TYPE.APPEND_COMMENTS] = _renderAppendComments;\r\n\r\nfunction getRenderMethod(type) {\r\n\treturn renderMethodMap[type] || function() {};\r\n}\r\n\r\nvar afterRenderMethodMap = {};\r\n\r\nfunction _afterRenderComments(type, config, data) {\r\n\t$(config.ctn).find('.timeago').timeago();\r\n\tformatCountNumber();\r\n\tloadLazyImage();\r\n}\r\n\r\nvar totalRenderedPostCount = 20;\r\nvar INSERT_AD_STEP = 40;\r\nvar latestADPos = 0;\r\nfunction _afterRenderPost(type, config, data) {\r\n\ttotalRenderedPostCount += data.data.data.length;\r\n\tif(isNaN(totalRenderedPostCount)) {\r\n\t\treturn;\r\n\t} \r\n\tvar $ctn = $(config.ctn);\r\n\t$ctn.hide();\r\n\r\n\tvar appBanner = $('#appDownload');\r\n\tvar totalPost = $ctn.find('li.group-item');\r\n\tvar idx = Math.floor(latestADPos / INSERT_AD_STEP);\r\n\twhile(true) {\r\n\t\tpos = idx*INSERT_AD_STEP-1;\r\n\t\tif(pos > totalRenderedPostCount) {\r\n\t\t\tbreak;\r\n\t\t}else if(pos > latestADPos){\r\n\t\t\tvar clone = appBanner.clone();\r\n\t\t\tclone.removeAttr('id');\r\n\t\t\tclone.removeClass('fly-away');\r\n\t\t\tclone.addClass('banner-in-list');\r\n\t\t\tclone.data('adIdx', pos+1);\r\n\t\t\tclone.insertAfter($(totalPost[pos]));\r\n\t\t\tlatestADPos = pos+1;\r\n\t\t}\r\n\t\tidx++;\r\n\t}\r\n\r\n\tif(!('gGroupIdList' in window)) {\r\n\t\twindow.gGroupIdList = [-1];\r\n\t}\r\n\r\n\tvar len = gGroupIdList.length;\r\n\tvar list = [].concat(data.data.data);\r\n\tif(type == EVENT_TYPE.LOAD_LATEST) {\r\n\t\tlist = list.reverse();\r\n\t}\r\n\t$(list).each(function(idx, d) {\r\n\t\tvar group = d.group || d;\r\n\t\tif(type == EVENT_TYPE.LOAD_LATEST) {\r\n\t\t\tgGroupIdList.unshift(''+group.group_id);\r\n\t\t}else if(type == EVENT_TYPE.LOAD_MORE) {\r\n\t\t\tgGroupIdList.splice(len-1, 0, ''+group.group_id);\r\n\t\t\tlen++;\r\n\t\t}\r\n\t});\r\n\r\n\tsaveGroupIdList(gGroupIdList);\t\r\n\t\r\n\tformatCountNumber();\r\n\r\n\r\n\t$ctn.show();\r\n}\r\n\r\nafterRenderMethodMap[EVENT_TYPE.LOAD_LATEST] = _afterRenderPost;\r\nafterRenderMethodMap[EVENT_TYPE.LOAD_MORE] = _afterRenderPost;\r\nafterRenderMethodMap[EVENT_TYPE.LOAD_COMMENTS] = _afterRenderComments;\r\nafterRenderMethodMap[EVENT_TYPE.LOAD_MORE_COMMENTS] = _afterRenderComments;\r\nafterRenderMethodMap[EVENT_TYPE.APPEND_COMMENTS] = _afterRenderComments;\r\n\r\nfunction getAfterRenderMethod(type) {\r\n\treturn afterRenderMethodMap[type] || function() {};\r\n}\r\n\r\nfunction _render(type, config, data) {\r\n\r\n\tvar renderMethod = getRenderMethod(type);\r\n\trenderMethod(config, data);\r\n\t\r\n\tsetTimeout(function() {\r\n\t\tvar afterRenderMethod = getAfterRenderMethod(type);\r\n\t\tafterRenderMethod ? afterRenderMethod(type, config, data) : '';\r\n\t}, 300);\r\n\r\n\t_updateConfig(type, config, data);\r\n}\r\n\r\nfunction _updateConfig(type, config, data) {\r\n\tif(type === EVENT_TYPE.LOAD_MORE) {\r\n\t\tconfig.has_more = data.data.has_more && data.data.data.length > 0;\r\n\t\tconfig.max_time = data.data.max_time || config.max_time;\t\r\n\r\n\t\tif('options' in data.data) {\r\n\t\t\tconfig.page = data.data.options.page;\r\n\t\t\tconfig.count = data.data.options.count;\r\n\t\t\tconfig.has_more = data.data.hasmore;\r\n\t\t}\t\t\r\n\t}else if(type === EVENT_TYPE.LOAD_LATEST) {\r\n\t\tconfig.min_time = data.data.min_time || config.min_time;\r\n\t}else if(type === EVENT_TYPE.LOAD_MORE_COMMENTS || \r\n\t\t\t type === EVENT_TYPE.LOAD_COMMENTS) {\r\n\t\tconfig.offset += data.data.recent_comments.length;\r\n\t\tconfig.has_more = data.has_more;\r\n\t}\r\n\r\n\tif(!config.has_more) {\r\n\t\t$('.loading-more').hide();\r\n\t}\r\n}\r\n\r\nmodule.exports = {\r\n\tinit: _init\r\n}"); 
+});

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.dao.TUserMapper">
+    <resultMap id="userMap" type="TUser">
+        <id column="userId" property="userId"></id>
+        <result property="userName" column="userName"></result>
+        <result property="password" column="password"></result>
+        <result property="nickName" column="nickName"></result>
+        <result property="phone" column="phone"></result>
+        <result property="selectId" column="selectId"></result>
+    </resultMap>
+    <select id="login" parameterType="TUser" resultMap="userMap">
+        SELECT * FROM  tuser
+        WHERE
+        userName=#{userName}
+        and
+        password=#{password}
+    </select>
+    <insert id="addTuser" parameterType="TUser">
+        INSERT into tuser(userId,userName,password,nickName,phone)
+        VALUES(null,#{userName},#{password},#{nickName},#{phone})
+    </insert>
+</mapper>

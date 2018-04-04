@@ -1,0 +1,99 @@
+.pink {
+  color: #ff819f !important;
+}
+@-webkit-keyframes rotator {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(270deg);
+    transform: rotate(270deg);
+  }
+}
+.global_tip {
+  position: fixed;
+  top: 5.714em;
+  width: 100%;
+  background: rgba(90, 160, 230, 0.9);
+  text-align: center;
+  line-height: 2;
+  height: 2em;
+  font-size: 1.2em;
+  color: #fff;
+  display: none;
+}
+@-webkit-keyframes colors {
+  0% {
+    stroke: #4285F4;
+  }
+  25% {
+    stroke: #DE3E35;
+  }
+  50% {
+    stroke: #F7C223;
+  }
+  75% {
+    stroke: #1B9A59;
+  }
+  100% {
+    stroke: #4285F4;
+  }
+}
+@keyframes colors {
+  0% {
+    stroke: #4285F4;
+  }
+  25% {
+    stroke: #DE3E35;
+  }
+  50% {
+    stroke: #F7C223;
+  }
+  75% {
+    stroke: #1B9A59;
+  }
+  100% {
+    stroke: #4285F4;
+  }
+}
+@-webkit-keyframes dash {
+  0% {
+    stroke-dashoffset: 71;
+  }
+  50% {
+    stroke-dashoffset: 18;
+    -webkit-transform: rotate(135deg);
+    transform: rotate(135deg);
+  }
+  100% {
+    stroke-dashoffset: 71;
+    -webkit-transform: rotate(450deg);
+    transform: rotate(450deg);
+  }
+}
+#wiredInput {
+  position: absolute;
+}
+.w320 {
+  font-size: 12px;
+}
+.w480 {
+  font-size: 16px;
+}
+.w640 {
+  font-size: 24px;
+}
+#loginFrame {
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+}
+.warning {
+  color: red !important;
+}

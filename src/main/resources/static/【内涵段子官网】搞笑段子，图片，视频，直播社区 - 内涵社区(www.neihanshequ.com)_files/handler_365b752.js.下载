@@ -1,0 +1,314 @@
+var HandlerModule = (function() {
+
+	var DEFAULT_OPTS = {
+		ctn: '',
+		isDetailPage: false
+	};
+
+	function getGroupId($target) {
+		var $t = $target;
+		var gid = null;
+		var clsName = '.detail-content-wrapper';
+		if($t.parents(clsName).length || $t.hasClass(clsName.substr(1))) {
+			$t = $t.parents(clsName).length ? $t.parents(clsName) : $t;
+			var gid = $t.data('groupId');
+		}
+		return gid;
+	}
+
+	var initContentHandler = function(ctn) {
+		ctn = ctn.find('.content');
+		initVideoHandler(ctn);
+	};
+
+	var videoModule = {
+		updateDuration: function(durationCtn) {
+			var $el = $(durationCtn);
+			var duration = ~~($el.data('duration'));
+			var ret = formatDuration(duration);
+			$el.hide().text(ret).show();
+		},
+
+		init: function(contentCtn, opts) {
+			var self = this;
+
+			imageModule.init(contentCtn, this.handleScrollEnd.bind(this));
+			
+			contentCtn.find('.video-container .total-time').each(function(idx, el) {
+				self.updateDuration(el);
+			});
+
+			contentCtn.delegate('.video-container', 'click', function(event) {
+				var $t = $(event.target);
+					// debugger;
+				if($t.parents('.poster-link').length || $t.hasClass('poster-link')) {
+					if($.browser.msie && $.browser.version <= 8) {
+						listener.trigger(
+							'com.neihanshequ', 
+							'popupTip', 
+							{text:'您的浏览器不支持视频播放！'}
+						);
+						return false;
+					}
+					var $posterLink = $t.parents('.poster-link').length ? 
+										$t.parents('.poster-link') : $t;
+					var $posterPage = $posterLink.parent();
+					var $player = $posterPage.parent().find('.player-container');
+					var $poster = $posterPage.find('.poster');
+
+					var videoWidth = $poster.width();
+					var videoSrc = $player.data('src');
+					var videoPoster = $player.data('posterSrc');
+
+					var ua = navigator.userAgent.toLowerCase();
+					event.stopImmediatePropagation();
+					$posterPage.hide();
+					var $video = $('<video>', {
+						'class': 'upload-video',
+						src: $player.data('src'),
+						poster: $player.data('posterSrc'),
+						type: 'video/mp4',
+						controls: 'true',
+						width: videoWidth
+					});
+
+					$player.empty().append($video.text('您的浏览器不支持视频播放！')).show();
+
+					self.closeCurrentVideo();
+					$video[0].play();
+					self.currentVideo = $video;
+					gaTrack($(event.currentTarget));
+
+					return false;
+				} else if($t.parents('.upload-video').length || $t.hasClass('upload-video')) {
+
+					if(opts.isDetailPage) {
+						$t = $t.hasClass('upload-video') ? $t : $t.parents('.upload-video');
+						$t[0].play();
+						gaTrack($(event.currentTarget));
+					}
+					event.stopImmediatePropagation();
+					return false;
+				}
+			});
+		},
+
+		/**
+		 * [handleScrollEnd description]
+		 * @param  {[type]} st scrollTop
+		 * @param  {[type]} sb scrollBottom = scrollTop + clientHeight
+		 * @return {[type]}    [description]
+		 */
+		handleScrollEnd: function(st, sb) {
+			if(this.currentVideo) {
+				var t = this.currentVideo.offset().top;
+				if(t < st || t > sb) {
+					this.closeCurrentVideo();
+				}
+			}
+		},
+
+		closeCurrentVideo: function() {
+			if(this.currentVideo) {
+				var container = this.currentVideo.parents('.video-container');
+				var poster = container.find('.poster-page');
+				var p = this.currentVideo.parent();
+
+				try{delete this.currentVideo[0];}catch(e){}
+				p.empty();
+				poster.show();
+
+				this.currentVideo = null;
+			}
+		}
+	};
+
+	var imageModule = function() {
+		var contentWidth = -1;
+		var lazyImageOffsetTop = {};
+		var bodyClientHeight = -1;
+
+		var processLazyImage = function() {
+			if(bodyClientHeight === -1) {
+				bodyClientHeight = document.body.clientHeight;
+			}
+			var st = $(window).scrollTop();
+			var sb = st + bodyClientHeight;
+
+			var needLoadImages = [];
+			for(var key in lazyImageOffsetTop) {
+				var obj = lazyImageOffsetTop[key];
+				var $img = obj.img,
+					t = obj.t,
+					b = obj.b;
+				if(t > st && t <= sb || b > st && b <= sb) {
+					needLoadImages.push($img);
+					delete lazyImageOffsetTop[key];
+				}
+			}
+
+			$(needLoadImages).each(function(idx, $img) {
+				var imageInfo = $img.data('imageInfo');
+				var imgName = 'l';
+				$img.attr('src', imageInfo[imgName].s);
+				$img.parent().addClass('loading');
+				$img.bind('load', function() {
+					$img.parent().removeClass('loading').addClass('done');
+					$img.css('visibility', 'visible');
+				});
+			});
+
+			return [st, sb];
+		};
+
+		var initLazyLoadImage = function(ctn, scrollEndCB) {
+			if(contentWidth === -1) {
+				contentWidth = 480;
+			}
+			ctn.find('img.lazy').each(function(idx, img) {
+				var $img = $(img);
+				var imageInfo = $img.data('imageInfo');
+				var imgObj = imageInfo.l;
+				var w = Math.max(Math.min(imgObj.w, 480), 320);
+				var ratio = imgObj.h / imgObj.w;
+
+				$img.css({
+					width: w,
+					height: w * ratio
+				});
+
+				var MAX_RATIO = 1.5;
+				var minRatio = Math.min(ratio, MAX_RATIO);
+				var $p = $img.parent();
+				// .css({
+				//  	'height': w*minRatio
+				// });
+				if(minRatio != ratio) {
+					$p.addClass('slide-large-image');
+				}
+
+				var of = $img.offset();
+				lazyImageOffsetTop[of.top] = {img:$img,t:of.top,b:of.top+$img.parent().height()};
+
+				$img.removeClass('lazy');
+			});
+
+			processLazyImage();
+
+			$(window).bind('scrollEnd', function() {
+				// return;
+				var ret = processLazyImage();
+				if(typeof scrollEndCB === 'function') {
+					var st = ret[0],
+						sb = ret[1];
+					scrollEndCB(st, sb);
+				}
+			});
+		};
+		return {
+			init: initLazyLoadImage
+		}
+	}();
+
+	var initFooterHandler = function(opts) {
+		var ctn = opts.ctn;
+
+		ctn.delegate('.footer', 'click', function(event) {
+			var $t = $(event.target);
+			if(true) {
+				var gid = getGroupId($t);
+				var stopEvent = true;
+				if($t.hasClass('comment')) {
+					gaTrack($t);
+					if(!!gid && opts.isDetailPage) {
+						UserAction.showPostPage(gid);
+					}else if(!!gid && checkUserLogin()) {
+						window.open('/group/'+gid+'/', '_self');
+					}
+				}else if($t.hasClass('J-share-btn') && checkUserLogin()) {
+					listener.trigger('com.neihanshequ', 'share', {
+						url: $t.data('url'),
+						desc: $t.data('desc'),
+						text: $t.data('text'),
+						pic: $t.data('pic'),
+						repin: {
+							gid: gid,
+							user_repin: $t.data('userRepin')
+						},
+						$t: $t //for change data value if necessary
+					});
+					gaTrack($t);
+				}else {
+					UserAction.doAction($t);
+				}
+
+				if(stopEvent) {
+					event.stopImmediatePropagation();
+				}
+			}
+		});
+	};
+
+	var initOtherHandler = function(opts) {
+		var ctn = opts.ctn;
+		ctn.delegate('.detail-content-wrapper', 'click', function(event) {
+			var $t = $(event.target);
+			var gid = getGroupId($t);
+			var stopEvent = true;
+
+			if($t.hasClass('report')) {
+				gaTrack($(event.currentTarget));
+				listener.trigger('com.neihanshequ', 'report', gid);
+			}else if(UserAction.doAction($t)) {
+			}else {
+				if(!!gid && !opts.isDetailPage) {
+					gaTrack($(event.currentTarget));
+					window.open('/group/'+gid+'/', '_self');
+				}
+			}
+
+			if(stopEvent) {
+				event.stopImmediatePropagation();
+			}
+		});
+
+		ctn.delegate('.app-download', 'click', function(event) {
+			var stopEvent = false;
+			var $t = $(event.target);
+			if($t.hasClass('J-app-dl-close')) {
+				var $ct = $(event.currentTarget);
+				listener.trigger('com.neihanshequ', 'ad-banner-removed', {idx:$ct.data('adIdx')});
+				$ct.remove();
+				stopEvent = true;
+			}
+
+			if(stopEvent) {
+				event.stopImmediatePropagation();
+				event.stopPropagation();
+				event.preventDefault();
+			}
+		});
+	};
+
+	
+	function _init(opts) {
+		opts = $.extend({}, DEFAULT_OPTS, opts);
+		if(typeof opts.ctn === 'string') {
+			opts.ctn = $(opts.ctn);
+		}
+
+		if(opts.ctn.find('#videoContainer').length) {
+			videoModule.init(opts.ctn, opts);
+		}else {
+			imageModule.init(opts.ctn);
+		}
+		// initFooterHandler(opts);
+		// initOtherHandler(opts);
+	}
+
+	return {
+		init: _init,
+		initLazyLoadImage: imageModule.init
+	}
+}());
+

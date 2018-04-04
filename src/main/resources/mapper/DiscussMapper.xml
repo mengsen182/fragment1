@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.bdqn.dao.DiscussMapper">
+    <resultMap id="discussMap" type="Discuss">
+        <id property="discussId" column="id"></id>
+        <result property="discussContent" column="discussContent"></result>
+        <result property="createDate" column="createDate"></result>
+        <association property="tUser" javaType="TUser">
+            <id property="userId" column="userId"></id>
+            <result property="userName" column="userName"></result>
+            <result property="nickName" column="nickName"></result>
+        </association>
+    </resultMap>
+    <select id="queryListDiscuss" resultMap="discussMap">
+    SELECT tu.userName,tu.nickName,di.* FROM discuss di, tuser tu WHERE
+    tu.userId=di.userId
+    AND publishId=#{publishId}
+    </select>
+</mapper>

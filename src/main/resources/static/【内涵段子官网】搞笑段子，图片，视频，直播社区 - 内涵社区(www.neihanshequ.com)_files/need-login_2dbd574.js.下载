@@ -1,0 +1,25 @@
+define('pagelet/site-v2/popup-window/need-login/need-login.js', function(require, exports, module){ module.exports = Pagelet.extend({
+	el: '#needLoginPopupWindow',
+	events: {
+		'click #showLoginBtn': 'showLogin'
+	},
+	init: function() {
+		this.el = $(this.el);
+		var self = this;
+		listener.on('com.neihanshequ', 'showNeedLogin', function() {
+			self.show();
+		});
+	},
+	show: function() {
+		this.el.show();
+	},
+	hide: function() {
+		this.el.hide();
+	},
+	showLogin: function() {
+		// listener.trigger('com.neihanshequ', 'showLogin');
+		// this.hide();
+        location.href='https://sso.toutiao.com/login/?service=' + location.href;
+	}
+}); 
+});

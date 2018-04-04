@@ -1,0 +1,51 @@
+define('pagelet/site-v2/tips/tips.js', function(require, exports, module){ module.exports = Pagelet.extend({
+	el: '#tips',
+    events: {
+    },
+    init: function() {
+        this.el = $(this.el);
+        // this.tl = new TimelineLite();
+        this.tl = new Tweenable();
+
+        listener.on('com.neihanshequ', 'popupTip', this.onPopup.bind(this));
+    },
+    onPopup: function(type, data) {
+        data = $.extend({}, this.DEFAULT_DATA, data);
+        data.text = data.text || '操作成功';
+        var self = this;
+        var content = this.el.find('.content').text(data.text);
+        this.el.attr('class', '').attr('class', data.cls);
+        this.el.show();
+
+        this.tl.setConfig({
+            from: {opacity:0.3},
+            to: {opacity:0.8},
+            duration: 300,
+            step:function(state) {
+                content.css('opacity', state.opacity);
+            },
+            finish:function() {
+                setTimeout(function() {
+                    self.tl.setConfig({
+                        from: {opacity:0.8},
+                        to: {opacity:0},
+                        duration: 300,
+                        step:function(state) {
+                            content.css('opacity', state.opacity);
+                        },
+                        finish:function() {
+                            self.hide();
+                        }
+                    });
+                    self.tl.tween();
+                }, data.timeout||500);
+            }
+        });
+        this.tl.tween();
+    },
+
+    hide: function() {
+        this.el.hide();
+    }
+}); 
+});

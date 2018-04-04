@@ -1,0 +1,325 @@
+var UserActionModule = (function() {
+	var DEFAULT_SETTING = {
+		ctn: ''
+	};
+
+	var options = {};
+
+	function checkUserLoginWrapper(cb) {
+		return function(event) {
+			if(checkUserLogin()) {
+				cb(event);
+			}
+			return false;
+		};
+	}
+
+	function _init(opts) {
+		options = $.extend({}, DEFAULT_SETTING, opts);
+		$(opts.ctn)
+			.delegate('.digg-wrapper', 'click', checkUserLoginWrapper(digg))
+			.delegate('.bury-wrapper', 'click', checkUserLoginWrapper(bury))
+			.delegate('.repin-wrapper', 'click', checkUserLoginWrapper(repin))
+			.delegate('.post-comment-btn', 'click', checkUserLoginWrapper(comment))
+
+			.delegate('.digg-comment', 'click', checkUserLoginWrapper(diggComment))
+			.delegate('.bury-comment', 'click', checkUserLoginWrapper(buryComment))
+			.delegate('.repost-comment', 'click', checkUserLoginWrapper(repostComment))
+			.delegate('.delete-btn', 'click', checkUserLoginWrapper(deleteGroup));
+
+		$(opts.ctn).delegate('.share-wrapper', 'mouseover', showShareWindow);
+		$(opts.ctn).delegate('.share-wrapper', 'mouseout', hideShareWindow);
+		$(opts.ctn).delegate('.share_url', 'click', enterDetail);
+		$('.setting-btn').on('click', setting);
+	}
+
+	function _getGroupId($ct) {
+		return $ct.parents('.options').data('groupId');
+	}
+
+	function _getCommentId($ct) {
+		var id = $ct.parents('.options').data('commentId');
+		if(!id) {
+			id = $ct.data('commentId');
+		}
+		return id;
+	}
+
+	function _getActionUrl(action_type, group_id, count){
+	    if($.inArray(action_type,['digg','bury','repin', 'enter_detail']) > -1){
+	    	return '/m/api/item_action/'
+		};
+		if($.inArray(action_type,['comment_digg','comment_bury']) > -1){
+			return '/m/api/comment_action/';
+		}; 
+		// if (action_type === 'comment')	  return "/action/" + group_id + "/comments/?count="+count;
+		return false;
+	};
+
+	function _doAction(actionType, groupId, opts) {
+		opts = opts || {};
+		var url = _getActionUrl(actionType, groupId);
+
+		if(!url) {
+			return;
+		}
+		var data = {
+			action: actionType,
+			group_id: groupId,
+			app_name: 'neihanshequ_web'
+		};
+		if(actionType.indexOf('comment_') != -1) {
+			data.action = actionType.replace('comment_', '');
+			data.comment_id = opts.commentId
+		}
+		$.ajax({
+			url: url,
+			type: 'POST',
+			dataType: 'json',
+			data: data
+		})
+		.done(function(data) {
+			if(!opts.noTip){
+				listener.trigger('com.neihanshequ', 'popupTip', {text: opts.popText || '操作成功'});
+			}
+			console.log(data);
+		})
+		.fail(function() {
+			console.error('ERROR');
+		});
+	}
+
+	function _alreadyDiggOrBury($ct, isComment) {
+		var ret = false;
+		var diggClass = '.digg-wrapper',
+			buryClass = '.bury-wrapper';
+
+		if(isComment) {
+			diggClass = '.digg';
+			buryClass = '.bury';
+		}
+
+		ret = false;
+		var digged = $ct.parent().find(diggClass+'.ed').length,
+			buried = $ct.parent().find(buryClass+'.ed').length;
+
+		ret = !!(digged || buried);
+
+		if(ret) {
+			var popText = '您已顶过';
+			if(buried) {
+				popText = '您已踩过';
+			}
+			listener.trigger('com.neihanshequ', 'popupTip', {text: popText});
+		}
+		return ret;
+	}
+
+	function addRemoveCount(type, $ct, isComment) {
+		var $span = isComment ? $ct : $ct.find('span');
+		var count = ~~($span.text());
+		if(type == 'add') {
+			count++;
+		}else {
+			count--;
+		}
+		$span.text(count);
+	}
+
+	function setting(event) {
+		listener.trigger('com.neihanshequ', 'popupTip', {text: '请去内涵段子客户端修改个人资料'});
+	}
+
+	function digg(event) {
+		var $ct = $(event.currentTarget);
+		if(_alreadyDiggOrBury($ct)) {
+			// nothing
+		}else {
+			$ct.addClass('ed');
+			addRemoveCount('add', $ct);
+			_doAction(
+				'digg', 
+				_getGroupId($ct)
+			);
+		}
+		return false;
+	}
+
+	function bury(event) {
+		var $ct = $(event.currentTarget);
+		if(_alreadyDiggOrBury($ct)) {
+			// nothing
+		}else {
+			$ct.addClass('ed');
+			addRemoveCount('add', $ct);
+			_doAction(
+				'bury', 
+				_getGroupId($ct)
+			);
+		}
+		return false;
+	}
+
+	function repin(event) {
+		var $ct = $(event.currentTarget);
+		var action = 'repin';
+		var popText = '收藏成功';
+		if($ct.hasClass('ed')) {
+			$ct.removeClass('ed');
+			addRemoveCount('remove', $ct);
+			popText = '取消收藏';
+		}else {
+			$ct.addClass('ed');
+			addRemoveCount('add', $ct);
+		}
+		_doAction(
+			action, 
+			_getGroupId($ct),
+			{popText: popText}
+		);
+		return false;
+	}
+
+	function scrollToPostWrapper() {
+		window.scrollTo(0, $('.post-comment-wrapper').offset().top);
+	}
+
+	function comment(event) {
+		if(!options.isDetailPage) {
+			var hash = '/#to-comments';
+			window.open('/p' + _getGroupId($(event.currentTarget)) + hash, '_blank');
+		}else {
+			$('#replyToCommentId').val('');
+			$('#replyToCommentId').attr('data-replyToContent', '');
+			var defaultholder = $('textarea#text').attr('data-defaultholder');
+			$('textarea#text').attr('placeholder', defaultholder).focus();
+			scrollToPostWrapper();
+		}
+		return false;
+	}
+
+	function diggComment(event) {
+		$ct = $(event.currentTarget);
+		if(_alreadyDiggOrBury($ct, true)) {
+
+		}else {
+			$ct.addClass('ed');
+			addRemoveCount('add', $ct, true);
+			_doAction(
+				'comment_digg', 
+				_getGroupId($ct),
+				{
+					commentId: _getCommentId($ct)
+				}
+			);
+		}
+		return false;
+	}
+
+	function buryComment(event) {
+		$ct = $(event.currentTarget);
+		if(_alreadyDiggOrBury($ct, true)) {
+
+		}else {
+			$ct.addClass('ed');
+			addRemoveCount('add', $ct, true);
+			_doAction(
+				'comment_bury', 
+				_getGroupId($ct),
+				{
+					commentId: _getCommentId($ct)
+				}
+			);
+		}
+		return false;
+	}
+
+	var textarea_setCursorPosition = function(targetId, pos){ 
+		var ctrl = document.getElementById(targetId);
+		if(ctrl.setSelectionRange){ 
+			ctrl.focus(); 
+			ctrl.setSelectionRange(pos,pos); 
+		}else if (ctrl.createTextRange) { 
+			var range = ctrl.createTextRange(); 
+			range.collapse(true); 
+			range.moveEnd('character', pos); 
+			range.moveStart('character', pos); 
+			range.select(); 
+		} 
+	}
+
+	function repostComment(event) {
+		var $ct = $(event.currentTarget);
+		var $item = $ct.parents('li.comment-item');
+		var text = $item.find('p').text();
+		var name = $item.find('.name').text();
+		var commentId = _getCommentId($ct);
+		$('#replyToCommentId').val(commentId);
+		$('#replyToCommentId').attr('data-replyToContent', '//@'+name+':'+text);
+		$('#text').attr('placeholder', '回复'+name).focus();
+		scrollToPostWrapper();
+		textarea_setCursorPosition('text', 0);
+		return false;
+	}
+
+	function deleteGroup(event) {
+		var $ct = $(event.currentTarget);
+		var gid = $ct.data('groupId');
+
+		var postCountRemove = function() {
+			var count = ~~$('#postCount').text().replace(/[\(\)]/ig, '');
+			count--;
+			count = count < 0 ? 0 : count;
+			$('#postCount').text('('+count+')');
+		};
+
+		$.ajax({
+			url: '/api/ugc/delete/', 
+			data: {
+				group_id: gid
+			},
+			type: 'POST',
+			dataType: 'json'
+		}).done(function(data) {
+			$ct.parents('li.group-item').remove();
+			listener.trigger('com.neihanshequ', 'popupTip');
+			postCountRemove();
+		}).fail(function() {
+
+		});
+		return false;
+	}
+
+	function showShareWindow(event) {
+		var $ct = $(event.currentTarget);
+		clearTimeout(window.__nh_showShareTimeId);
+		window.__nh_showShareTimeId = setTimeout(function() {
+			listener.trigger('com.neihanshequ', 'showShare', $ct, $ct.data());
+		}, 100);
+	}
+
+	function hideShareWindow(event) {
+		clearTimeout(window.__nh_showShareTimeId);
+		window.__nh_showShareTimeId = setTimeout(function() {
+			listener.trigger('com.neihanshequ', 'hideShare');
+		}, 300);
+	}
+
+	function enterDetail(event){
+		var $ct = $(event.currentTarget);
+		var action = 'enter_detail';
+		var gid = $ct.data('groupId');
+		_doAction(
+			action, 
+			gid,
+			{noTip: true}
+		);
+	}
+
+
+	return {
+		init: function(opts) {
+			_init(opts);
+		}
+	}
+}());

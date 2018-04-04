@@ -1,0 +1,697 @@
+define('pagelet/site-v2/popup-window/post/post.js', function(require, exports, module){ var CONTENT_TYPE = {
+    DEFAULT: 3,
+    IMAGE: 1,
+    VIDEO: 2
+};
+
+var showTips = function(txt) {
+    listener.trigger('com.neihanshequ', 'popupTip', {text: txt, timeout:1500});
+}
+
+var showErrorTips = function(d) {
+    if(d.message == 'error') {
+        if(d.data && d.data.description){
+            showTips(d.data.description);
+        }else {
+            showTips(d.msg || d.message || d.data);
+        }
+    }else {
+        showTips(d.message);
+    }
+}
+
+
+
+var TOTAL_WORD_COUNT = 300;
+
+var onInputChangeMethod = 'input';
+if($.browser.msie && $.browser.version <= 8) {
+    onInputChangeMethod = 'keyup';
+}
+
+var inputChangeEventKey = onInputChangeMethod + ' #postContent';
+
+var material_id = ''; // 视频material_id
+var current_video = {
+    f: '',  //视频名称
+    ts: 0,  //开始上传时间戳，
+    te: 0,  // 用户上传结束时间
+    fs: 0  //file_size文件大小
+};
+//视频统计相关状态常量
+var upload_log_code = {
+    "unknow_error_code": -2, // 返回非http200时，置-2
+    "no_code": -1 //上传API返回http code=200，未正常捕获返回码
+};
+
+module.exports = Pagelet.extend({
+    el: '#postPopupWindow',
+    events: {
+        'click .tabs li': 'onChangeTag',
+        'change #file': 'uploadFile',
+        'submit #publishForm': 'doSubmit',
+        'click .img-preview-wrapper .clear': 'clearUploadFile'
+    },
+
+    // 视频默认封面
+    defaultVideoThumb: '//s3a.bytecdn.cn/neihan/resource/neihan_web/static/image/site-v2/post/video_thumb_dcd9853.png',
+
+    init: function(opts) {
+        this.events[inputChangeEventKey] = 'updateRemainCount';
+
+        this.options = opts || {};
+        this.el = $(this.el);
+
+        var self = this;
+        listener.on('com.neihanshequ', 'showPost', function(type, params) {
+            self.show();
+            if($.isArray(params)) {
+                var activityId = params[1],
+                    activityTitle = params[2];
+                if(activityId && activityTitle) {
+                    activityTitle = decodeURIComponent(activityTitle);
+                    self.el.find('#postContent').val('#'+activityTitle+'#');
+                    self.el.find('input[name="activity_id"]').val(activityId);
+                }
+            }
+        });
+        this.reset();
+
+        var $upload_form = this.el.find('#upload');
+        var self = this;
+        $(function() {
+            var $fromIframe = self.el.find('input[name="from_iframe"]').val('');
+
+            var $processBar = self.el.find('.process-bar');
+            var $submitBtn = self.el.find('#submitBtn');
+
+            function __updateProcessBar(val) {
+                if(!$.browser.msie || $.browser.version > 8) {  
+                    $processBar.css('width', val);
+                }
+            }
+
+            $upload_form.ajaxForm({
+                beforeSend: function() {
+                    var percentVal = '0%';
+                    $submitBtn.val('正在上传');
+                    __updateProcessBar(percentVal);
+
+                    // 设置当前video for log
+                    var is_video = self.currentTag == 'funnyvideo',
+                        $file_input = self.el.find('#file'),
+                        file = $file_input[0].files[0];
+                    if (is_video) {
+                        current_video.f = $file_input.val();
+                        current_video.ts = +new Date();
+                        current_video.fs = file.size || 0; //IE9-等低级浏览器获取不到大小
+                    }
+                },
+                uploadProgress: function(event, position, total, percentComplete) {
+                    var percentVal = percentComplete + '%';
+                    console.log(percentVal);
+                    __updateProcessBar(percentVal);
+                },
+                success: function() {
+                    var percentVal = '100%';
+                    console.log(percentVal);
+                    __updateProcessBar(percentVal);
+                },
+                complete: function(xhr) {
+                    self.releaseUploading();
+                    $submitBtn.val('提交');
+                    var d = null;
+                    try{
+                        d = JSON.parse(xhr.responseText);
+                    }catch(e){}
+
+                    var is_video = self.currentTag == 'funnyvideo';
+                    if(!d) {
+                        showTips("上传失败");
+                        self.content_type = CONTENT_TYPE.DEFAULT;
+
+                        //收集日志信息
+                        if(is_video) {
+                            self.collectUserUploadLog(upload_log_code.unknow_error_code);
+                        }
+                        return;
+                    }
+                    if(d.message == 'success'){
+                        var data = d.data;
+
+                        var img_url = "";
+                        var $previewImg = self.el.find('#previewImg');
+                        var $file_input = self.el.find('#file');
+                        try {
+                            if (is_video) {
+                                img_url = data.poster_url? data.poster_url: self.defaultVideoThumb;
+                            } else {
+                                img_url = data.image_url_list[0].url;
+                            }
+                        } catch (e) {}
+
+                        if(is_video && !img_url){
+                            showTips("上传失败");
+                            self.content_type = CONTENT_TYPE.DEFAULT;
+
+                            //收集日志信息
+                            self.collectUserUploadLog(d.code);
+
+                            return;
+                        };
+                
+                        if(is_video) {
+                            self.el.find('input[name="material_id"]').val(material_id);
+                            $previewImg.attr('src', img_url);
+
+                            //收集日志信息
+                            current_video.te = +new Date();
+                            self.collectUserUploadLog(d.code);
+                        }else {
+                            self.el.find('input[name="material_id"]').val(data.material_id);
+                            if('FileReader' in window) {
+                                var image = $file_input[0].files[0];
+                                var reader = new FileReader();
+                                reader.onload = function (){
+                                    $previewImg.attr('src', reader.result);
+                                }
+                                reader.readAsDataURL(image);
+                            }else if($.browser.msie) {
+                                var path = $file_input.val(),
+                                    tt = document.createElement("img"),
+                                    name = path.slice(path.lastIndexOf("\\") + 1 ),
+                                    fakeimg = $('<img id="preview_fake" style="visibility:hidden;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale);"/>');
+                                if("XMLHttpRequest" in window){
+                                    $file_input[0].select();
+                                    $file_input[0].blur();
+                                    path = document.selection.createRange().text;
+                                    document.selection.empty();
+                                }
+
+                                function imgloader (mode){
+                                    return "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + path + "', sizingMethod='" + mode + "')";
+                                }
+
+
+                                $('body').append(tt);
+                                // (doc.body || doc.documentElement).appendChild(fakeimg[0]);
+                                // fakeimg[0].filters.item('DXImageTransform.Microsoft.AlphaImageLoader').src = path;
+                                
+                                with(tt.runtimeStyle){
+                                    filter = imgloader("image");
+                                    zoom = width = height = 1;
+                                    position = "absolute";
+                                    right = "9999em";
+                                    top = "-9999em";
+                                    border = 0;
+                                }
+                                // tt = fakeimg[0];
+                                var info = {
+                                    height: tt.offsetHeight,
+                                    width: tt.offsetWidth,
+                                    name: name,
+                                    src: imgloader("scale")
+                                };
+                                if( info.height > 1 || info.width > 1 ){
+                                    var $el = $('#fakeImgPreviewer').html('<div class="viewpic"></div>');
+                                    $el[0].style.filter = imgloader("scale");
+                                    $('#fakeImgPreviewer').removeClass('hidden');
+                                    $('#previewImg').addClass('hidden');
+                                } else {
+                                    console.error('error');
+                                    try {
+                                        $previewImg.attr('src', data.url_list[0].url);
+                                    }catch(e){}
+                                }
+                                tt.parentNode.removeChild(tt);
+                            }
+                        }
+
+                        self.el.addClass('show-img-preview');   
+                        self.content_type = (is_video? CONTENT_TYPE.VIDEO: CONTENT_TYPE.IMAGE);
+
+                    }else{
+                        showErrorTips(d);
+                        self.content_type = CONTENT_TYPE.DEFAULT;
+
+                        //收集日志信息
+                        if(is_video) {
+                            self.collectUserUploadLog(upload_log_code.no_code);
+                        }
+                    }
+                }
+            });
+        });
+
+        this.initCategoryList();
+    },
+    // 初始化投稿频道列表
+    initCategoryList: function() {
+        var self = this;
+        $.ajax({
+            url: '/api/get_categories/?r='+Math.random(),
+            type: 'GET',
+            dataType: 'json'
+        }).done(function(data) {
+            var categories = data.categories || [];
+            // 是否显示投稿频道的逻辑是服务端控制的，如果不返回，则不渲染
+            if(categories.length) {
+                // 吧太多，需要支持搜索
+                // 处理数据
+                var allCategories = [{}];
+                $.each(categories, function(index, category){
+                    allCategories.push({
+                        id: category.id,
+                        text: category.name,
+                        name: category.name
+                    });
+                });
+                // 渲染, 这里有个z-index问题，需要手动调高一下select2.css
+                var $selector = self.el.find('#categorySelector');
+                $selector.select2({
+                    data: allCategories
+                });
+                $selector.select2({
+                    placeholder: '选择频道...'
+                });
+
+                // // 下面是无搜索版的select选择形式
+                // var $selector = self.el.find('#categorySelector');
+                // var option = $('<option>', {
+                //         value: 0
+                //     }).text('选择频道...');
+                // $selector.append(option);
+                // $.each(categories, function(idx, cate) {
+                //     option = $('<option>', {
+                //         value: cate.id
+                //     }).text(cate.name);
+                //     $selector.append(option);
+                // });
+                $selector.parents('.category-wrapper').removeClass('hidden');
+                self.el.addClass('has-category');
+
+            }
+        }).fail(function() {
+
+        });
+    },
+    reset: function() {
+        this.currentTag = 'joke';
+        this.content_type = CONTENT_TYPE.DEFAULT;
+        this.el.find('.tabs li').removeClass('active');
+        this.el.find('li[data-tag="'+this.currentTag+'"]').addClass('active');
+        this.el.find('#postContent').val('');
+        this.updateRemainCount();
+        this.clearUploadFile();
+        this.releaseUploading();
+        this.isSubmit = false;
+        this.showHideFileSelector(false);
+    },
+    clearUploadFile: function(event) {
+        if(event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+        this.el.find('#file').val('')[0].value = '';
+        this.el.find('input[name="material_id"]').val('');
+        this.el.removeClass('show-img-preview');
+        this.el.find('.process-bar').css('width', 0);
+        this.el.find('#submitBtn').val('提交');
+        if($.browser.msie && $.browser.version <= 9) {
+            // self.el.find('.file-input').addClass('hidden');
+            this.el.find('#upload').removeClass('hidden');
+            this.el.find('input[name="from_iframe"]').val('1');
+        }else {
+            this.el.find('input[name="from_iframe"]').val('');
+        }
+        return false;
+    },
+
+    updateRemainCount: function (event) {
+        var $t = this.el.find('#postContent');
+        var value = $t.val();
+        var count = value.length;
+        var remain = TOTAL_WORD_COUNT - count;
+        $('.words-remain span').text(remain);
+    },
+
+    show: function() {
+        this.el.show();
+        this.reset();
+        if(typeof _gaq != 'undefined') {
+            _gaq.push(['_trackPageview', '/publish/']);
+        }
+    },
+    hide: function() {
+        this.el.hide();
+    },
+    showHideFileSelector: function(show) {
+        if(show) {
+            this.el.find('.select-file-tip').show();
+            var $fileInput = this.el.find('.file-input').show();
+            var $upload = this.el.find('#upload').show();
+            if($.browser.msie) {
+                $upload.css('opacity', '1').addClass('ie');
+                $fileInput.css('opacity', 0);
+            }
+        }else {
+            this.el.find('.select-file-tip').hide();
+            this.el.find('.file-input').hide();
+            this.el.find('#upload').hide();
+        }
+        this.showHideError(false);
+    },
+    isActionLock: function() {
+        return this.isUploading || this.isSubmit;
+    },
+    lockUploading: function() {
+        this.isUploading = true;
+        this.el.find('#file').attr('disabled', 'disabled');
+    },
+    releaseUploading: function() {
+        this.isUploading = false;
+        this.el.find('#file').removeAttr('disabled');   
+    },
+    lockSubmit: function() {
+        this.isSubmit = true;
+        this.el.find('#submitBtn').attr('disabled', 'disabled');
+    },
+    releaseSubmit: function() {
+        this.isSubmit = false;
+        this.el.find('#submitBtn').removeAttr('disabled');
+    },
+
+    showHideError: function(show, text) {
+        var $error = this.el.find('#fileUploadError').text(text||'');
+        if(show) {
+            $error.css('visibility', 'visible');
+            this.el.find('#submitBtn').attr('disabled', 'disabled');
+        }else {
+            $error.css('visibility', 'hidden');
+            this.el.find('#submitBtn').removeAttr('disabled');
+        }
+    },
+
+    onChangeTag: function(event) {
+        var $ct = $(event.currentTarget);
+        var tag = $ct.data('tag');
+        $ct.parent().find('li').removeClass('active');
+        $ct.addClass('active');
+        this.currentTag = tag;
+        this.el.find('input[name="tag"]').val(this.currentTag);
+        var $fileInput = this.el.find('.file-input');
+        if(tag == 'joke') {
+            this.showHideFileSelector(false);
+            this.content_type = CONTENT_TYPE.DEFAULT;
+        }else {
+            this.showHideFileSelector(true);
+            this.content_type = tag == 'funny_heavy' ? CONTENT_TYPE.IMAGE : CONTENT_TYPE.VIDEO;
+
+            // 判断上传视频的时候显示
+            if (this.content_type == CONTENT_TYPE.VIDEO) {
+                $('#videoUploadTip').show();
+            } else {
+                $('#videoUploadTip').hide();
+            }
+        }
+    },
+
+    onSelectFile: function(event) {
+        this.el.find('#file').trigger('click');
+    },
+
+    isSpecialUser: function() {
+        //特殊用户放过视频上传限制，3781024058（meiyi），4682781772（Arthas）
+        if(!window.isUserLogin()) return false;
+        var special_user_list = ['5910440735', '3781024058', '4682781772'];
+        var userInfo = window.getCurrentUser();
+        if(userInfo && userInfo.user_id && $.inArray(userInfo.user_id, special_user_list) > -1) return true;
+        return false;
+    },
+
+    uploadFile: function(event) {
+        if(this.isActionLock()) {
+            return false;
+        }
+        var $file_input = $(event.currentTarget);
+        var file_name = $file_input.val();
+        if(!file_name) return false;
+
+        var is_video = this.currentTag == 'funnyvideo';
+        
+        if(!is_video && !/.(jpg|png|jpeg|gif)/gi.test(file_name)){
+            this.showHideError(true, "请选择图片文件,后缀必须是jpg,png,jpeg,gif");
+            $file_input.val("");
+            return false;
+        }
+        if(is_video && !/.(mp4|avi|rmvb|rm|flv|mpeg|ra|ram|mov|wmv)/gi.test(file_name)){
+            this.showHideError(true, "请选择视频文件,后缀必须是mp4,avi,rmvb,rm,flv,mpeg,ra,ram,mov,wmv");
+            $file_input.val("");
+            return false;
+        }
+
+        if($file_input[0].files) {
+            var size =  $file_input[0].files[0].size;
+            if(is_video){
+                if (/.(mp4|webm|ogv)/gi.test(file_name) && size > 1024*1024*500 && !this.isSpecialUser()) {
+                    this.showHideError(true, "你上传的是mp4文件, 最大支持500M");
+                    $file_input.val("");
+                    return false;
+                }
+                // 除了浏览器支持的格式以及avi格式外的其他几种文件,限制为150M
+                if (!/.(mp4|webm|ogv)/gi.test(file_name)&& size > 1024*1024*150 && !this.isSpecialUser()) {
+                    this.showHideError(true, "你上传的是非mp4文件, 最大支持150M");
+                    $file_input.val("");
+                    return false;
+                }
+
+            }
+
+            if(!is_video && size > 1024*1024*20) {
+                this.showHideError(true, "最多上传20M大小的文件");
+                $file_input.val("");
+                return false;
+            }
+        }
+
+        var self = this;
+        if(!is_video) {
+            self.uploadSubmit($file_input, is_video);
+        } else {
+
+            // 非avi格式,直接创建
+            if(/.(mp4|webm|ogv|rmvb|rm|flv|mpeg|ra|ram|mov|wmv)/gi.test(file_name)) {
+                var URL = window.URL || window.webkitURL;
+                if (URL && $file_input[0].files) {
+                    var objectURL = URL.createObjectURL($file_input[0].files[0]);
+                    var videoNode = document.querySelector('video');
+                    if (!videoNode) {
+                        self.uploadSubmit($file_input, is_video);
+                    } else {
+                        videoNode.src = objectURL;
+                        var tt = setTimeout(function () {
+                            self.uploadSubmit($file_input, is_video);
+                        }, 1500);
+                        videoNode.onloadedmetadata = function () {
+                            clearTimeout(tt);
+                            var s = parseInt(videoNode.duration, 10);
+                            if (s > 5 * 60 && !self.isSpecialUser()) {
+                                self.showHideError(true, "视频大小不能大于5分钟");
+                                $file_input.val("");
+                            } else {
+                                self.uploadSubmit($file_input, is_video);
+                            }
+                        }
+                    }
+                } else {
+                    self.uploadSubmit($file_input, is_video);
+                }
+            } else {
+                // 进行二进制解析
+
+                if($file_input[0].files){
+                    var f = $file_input[0].files[0];
+                    var reader = new FileReader();
+                    // 二进制读取文件
+                    reader.onload = function (e) {
+                        try {
+                            // 解析 avi头部信息: https://www.fastgraph.com/help/avi_header_format.html
+                            var buf = e.target.result;
+                            var frame_delays = parseInt(self.bufferToHex(buf, 32, 4), 16);
+                            var frames = parseInt(self.bufferToHex(buf, 48, 4), 16);
+                            var duration = frames * frame_delays/1000000;   // 视频时长(s)
+                            if (duration > 5 * 60 && !self.isSpecialUser()) {
+                                self.showHideError(true, "视频大小不能大于5分钟");
+                                $file_input.val("");
+                            } else {
+                                self.uploadSubmit($file_input, is_video);
+                            }
+                        } catch (e){
+                            // 解析失败时,直接上传视频给后台
+                            self.uploadSubmit($file_input, is_video);
+                        }
+                    };
+                    reader.readAsArrayBuffer(f);
+                }
+            }
+        }
+    },
+
+    // buf 二进制arrayBuffer对象, offset: 偏移, step 步长
+    bufferToHex: function (buf, offset, step){
+        var result_hex='';
+        for (var i=step; i>0; i--){
+            var one_byte = new DataView(buf.slice(offset+i-1, offset+i));
+            one_byte = one_byte.getUint8(one_byte).toString(16);
+            if(one_byte === '0'){
+                result_hex += '00';
+            } else {
+                result_hex += one_byte;
+            }
+        }
+        return result_hex;
+    },
+
+    uploadSubmit: function($file_input, is_video) {
+        var self = this;
+
+        self.showHideError(false);
+
+        var form = $file_input.parent();
+
+        if(is_video) {
+            form.attr('action', self.getVideoUploadUrl());
+        }else {
+            form.attr('action', form.attr('image-action'));
+        }
+
+        $file_input.parent().submit();
+        setTimeout(function() {
+            self.lockUploading();
+        }, 100);
+    },
+
+    doSubmit: function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if(this.isActionLock()) {
+            return false;
+        }
+
+        if($('#postContent').val().length > TOTAL_WORD_COUNT) {
+            showTips('您写的太多啦，字数上限是'+TOTAL_WORD_COUNT+'哦！');
+            return false;
+        }
+
+        if(this.content_type != CONTENT_TYPE.DEFAULT && !$('input[name="material_id"]').val()) {
+            showTips('对不起，此处不允许发送纯文字');
+            return false;
+        }
+
+        var $form = $(event.currentTarget);
+        var self = this;
+
+        $form.find('input[name="content_type"]').val(this.content_type);
+
+
+        this.isSubmit = true;
+        $.post($form.attr('action'), $form.serialize())
+         .done(function(d) {
+            if(d.message == "success"){
+                if(!self.options.isProxyUser) {
+                    showTips("已发表，粉丝第一时间可见");
+                }else {
+                    showTips('已发表，粉丝第一时间可见，group_id:' + d.group_id);
+                }
+                self.reset();
+                self.hide();
+            }else {
+                showErrorTips(d);
+            }
+         })
+         .fail(function(){
+             showTips("网络错误,请稍候重试")
+         }).always(function() {
+            self.isSubmit = false;
+         });
+    },
+
+    /**视频上传new  start**/
+    exec_api: function(obj, async, type) {
+        var ret = null,
+            self = this;
+
+        $.ajax({
+            type: type || 'POST',
+            async: async,
+            url: '/file/video_upload_info/',
+            data: {json_data : JSON.stringify(obj)},
+            dataType: 'json',
+            success: function(d) {
+                if (d.message == 'success') {
+                    ret = d.data;
+                } else {
+                    self.showHideError(true, '抱歉，服务异常，请稍后再试');
+                }
+            },
+            timeout: 3000,
+            error: function() {
+                self.showHideError(true, '抱歉，服务异常，请稍后再试');
+            }
+        });
+
+        return ret;
+    },
+
+    getVideoUploadUrl: function() {
+        var obj = {
+                'api' : 'get_upload_info'
+            },
+            initRet = null,
+
+        initRet = this.exec_api(obj, false); 
+        material_id = initRet.material_id;
+
+        return initRet.upload_url;
+    },
+
+    collectUserUploadLog: function(error_code) {
+        var user_id = '';
+        if (window.getCurrentUser) {
+            var user = window.getCurrentUser();
+            user_id = user.user_id;
+        }
+        var log = {
+            'sv': '1.0',
+            'u': user_id,
+            'f': current_video.f,
+            'e': error_code,
+            'fs': current_video.fs, 
+            'r': 0,
+            'et': 0,
+            'ts': current_video.ts,
+            'te': +new Date(),
+            'ua': navigator.userAgent,
+            'ref_id': material_id
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/video/report_error/',
+            data: {id: material_id, data: JSON.stringify(log)},
+            dataType: 'json',
+            success: function(){
+            },
+            timeout: 3000
+        });
+    }
+    /**视频上传new  end**/
+
+});
+
+
+
+
+ 
+});

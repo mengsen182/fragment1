@@ -1,0 +1,20 @@
+define('pagelet/site-v2/popup-window/audit/audit.js', function(require, exports, module){ module.exports = Pagelet.extend({
+	el: '#auditPopupWindow',
+	events: {
+		
+	},
+	init: function() {
+		this.el = $(this.el);
+		var self = this;
+		listener.on('com.neihanshequ', 'showAudit', function() {
+			self.show();
+		});
+	},
+	show: function() {
+		this.el.show();
+	},
+	hide: function() {
+		this.el.hide();
+	}
+}); 
+});

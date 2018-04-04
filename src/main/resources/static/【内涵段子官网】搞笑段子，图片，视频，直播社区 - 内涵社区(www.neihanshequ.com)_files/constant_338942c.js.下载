@@ -1,0 +1,6 @@
+var Constant = {
+	GOD_COMMENT_MIN_TIME_KEY: 'neihan_wap_god_comment_min_time',
+	GROUP_ID_LIST_KEY_PREFIX: 'neihanshequ_group_list_v2',
+	LOCAL_POST_KEY: 'neihanshequ_temp_post',
+	HIDE_APP_BANNER_KEY: 'neihanshequ_appBanner_hide'
+}
